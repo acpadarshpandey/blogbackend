@@ -3,7 +3,7 @@ const bodyParser=require("body-parser");
 const { connect }= require("mongoose");
 const blogPosts= require("./posts.model");
 
-const PORT=4000;
+const PORT=process.env.PORT|| 4000;
 
 const DB_URI =
  ("mongodb+srv://apptodo:databaseoftodo@cluster0-r1zra.mongodb.net/test?retryWrites=true&w=majority/blogger",{
