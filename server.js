@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const blogPosts= require("./posts.model");
 const PORT = process.env.PORT || 3000;
+const User=require('./model/user.model')
 
  app.use(bodyParser.json());
  app.use(bodyParser.urlencoded({
@@ -11,15 +12,17 @@ const PORT = process.env.PORT || 3000;
  })
  );
 
-mongoose.connect("mongodb+srv://apptodo:databaseoftodo@cluster0-r1zra.mongodb.net/test?retryWrites=true&w=majority/blogger",{
+mongoose.connect("mongodb+srv://apptodo:databaseoftodo@cluster0-r1zra.mongodb.net/test?retryWrites=true&w=majority",{
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: true,
     useCreateIndex: true
 });
 
+   
+
 app.get('/', (req, res) => {
-    blogPosts.find({},(err,BlogList)=>{
+    blogPosts.find({}).exec((err,BlogList)=>{
         if(err) console.log(err);
         else{
             res.send({BlogList:BlogList});
@@ -29,23 +32,19 @@ app.get('/', (req, res) => {
 
 app.post('/signup',(req,res)=>{
     
-    const Post = new blogPosts({
-        name:req.body.name,
+    const user = new User({
+        email:req.body.email,
         password:req.body.password
-    });
-    blogPosts.create(Post,function(err,blogPost){
-        if(err) console.log(err)
-        else{
-            console.log(' item added');
-        }
+    }).save((err,response)=>{
+        if(err) res.status(400).send(err)
+        res.status(200).send(response)
     })
-    res.send({status:"success"});
-});
+     });
 
 
 app.post('/signin',function(req,res){
 
-    blogPosts.findOne({name:req.body.name},(err,document)=>{
+    User.findOne({email:req.body.email},(err,document)=>{
         if(err) console.log(err)
         else{
             if(document.password === req.body.password){
@@ -56,7 +55,21 @@ app.post('/signin',function(req,res){
         }
     });
 });
+app.post("/createBlog",(req,res) =>{
 
+        const Post= new blogPosts();
+    
+        const{name, blog}= req.body;
+    
+        Post.name=name;
+        Post.blog=blog;
+    
+        Post.save((err,BlogList) =>{
+              if(err) return res.send("ERROR");
+    
+     return res.json(BlogList);
+        });
+    });
 app.post('/updateBlog',(req,res)=>{
     blogPosts.findOneAndUpdate(
         {name:req.body.name},
