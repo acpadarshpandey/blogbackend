@@ -2,11 +2,13 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const blogPosts= require("./posts.model");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 const User=require('./model/user.model')
 
  app.use(bodyParser.json());
+ app.use(cors());
  app.use(bodyParser.urlencoded({
      extended: true,
  })
@@ -42,27 +44,28 @@ app.post('/signup',(req,res)=>{
      });
 
 
-app.post('/signin',function(req,res){
+// app.post('/signin',function(req,res){
 
-    User.findOne({email:req.body.email},(err,document)=>{
-        if(err) console.log(err)
-        else{
-            if(document.password === req.body.password){
-                res.send({status:"success"});
-            }else{
-                res.send({status:"password incorrect"});
-            }
-        }
-    });
-});
+//     User.findOne({email:req.body.email},(err,document)=>{
+//         if(err) console.log(err)
+//         else{
+//             if(document.password === req.body.password){
+//                 res.send({status:"success"});
+//             }else{
+//                 res.send({status:"password incorrect"});
+//             }
+//         }
+//     });
+// });
 app.post("/createBlog",(req,res) =>{
 
-        const Post= new blogPosts();
+        const Post= new blogPosts(req.body);
     
-        const{name, blog}= req.body;
+        // const{Author, Blog}= req.body;
     
-        Post.name=name;
-        Post.blog=blog;
+        // Post.Author=Author;
+        // Post.Blog=Blog;
+        
     
         Post.save((err,BlogList) =>{
               if(err) return res.send("ERROR");
@@ -72,8 +75,8 @@ app.post("/createBlog",(req,res) =>{
     });
 app.post('/updateBlog',(req,res)=>{
     blogPosts.findOneAndUpdate(
-        {name:req.body.name},
-        {$set:{blog:req.body.blog}})
+        {Author:req.body.Author},
+        {$set:{blog:req.body.Blog}})
     .then(res=>{
         console.log("updated successfully");
     })
@@ -96,6 +99,139 @@ app.post('/blogDelete',(req,res)=>{
 / app.listen(PORT, () => {
          console.info(`App is running at ${PORT}`);
      }); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
+
+// const express = require('express')
+// const app = express()
+// const bodyParser = require('body-parser');
+// const mongoose = require('mongoose');
+// const blogPosts= require("./posts.model");
+// const PORT = process.env.PORT || 3000;
+// const User=require('./model/user.model')
+
+//  app.use(bodyParser.json());
+//  app.use(bodyParser.urlencoded({
+//      extended: true,
+//  })
+//  );
+
+// mongoose.connect("mongodb+srv://apptodo:databaseoftodo@cluster0-r1zra.mongodb.net/test?retryWrites=true&w=majority",{
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//     useFindAndModify: true,
+//     useCreateIndex: true
+// });
+
+   
+
+// app.get('/', (req, res) => {
+//     blogPosts.find({}).exec((err,BlogList)=>{
+//         if(err) console.log(err);
+//         else{
+//             res.send({BlogList:BlogList});
+//         }
+//     });
+// });
+
+// app.post('/signup',(req,res)=>{
+    
+//     const user = new User({
+//         email:req.body.email,
+//         password:req.body.password
+//     }).save((err,response)=>{
+//         if(err) res.status(400).send(err)
+//         res.status(200).send(response)
+//     })
+//      });
+
+
+// app.post('/signin',function(req,res){
+
+//     User.findOne({email:req.body.email},(err,document)=>{
+//         if(err) console.log(err)
+//         else{
+//             if(document.password === req.body.password){
+//                 res.send({status:"success"});
+//             }else{
+//                 res.send({status:"password incorrect"});
+//             }
+//         }
+//     });
+// });
+// app.post("/createBlog",(req,res) =>{
+
+//         const Post= new blogPosts();
+    
+//         const{Author,userAuthor,password, blog}= req.body;
+    
+//         Post.Author=Author;
+//         Post.blog=blog; 
+//         Post.author=email;
+//         User.findOne({email:req.body.email},(err,document)=>{
+//             if(document.password === req.body.password)
+//           Post.save((err,BlogList,) =>{
+//               if(err) return res.send("ERROR");
+//           return res.json(BlogList);
+//         });
+//     });
+// app.post('/updateBlog',(req,res)=>{
+//     blogPosts.findOneAndUpdate(
+//         {Author:req.body.Author},
+//         {author:req.body.userAuthor},
+//         {$set:{blog:req.body.blog}},(err,document)=>
+//         {if(document.userAuthor===req.body.password) 
+//         console.log("updated successfully");
+    
+//     .catch(err=>{
+//         res.json({
+//             err:`${err}`
+//         })
+//     })
+// });
+
+// app.post('/blogDelete',(req,res)=>{
+//     blogPosts.findByIdAndRemove({_id:req.body.id},{author:req.body.userAuthor},err=>{
+//         if(err){
+//              console.log(err)
+//         }
+//     })
+//     res.redirect('/');
+// })
+
+//  app.listen(PORT, () => {
+//          console.info(`App is running at ${PORT}`);
+//      });
+     
+
+
+
+
 
 
 // const app =require("express")();
@@ -140,7 +276,7 @@ app.post('/blogDelete',(req,res)=>{
 // app.post('/signup',(req,res)=>{
     
 //     const Post = new blogPosts({
-//         name:req.body.name,
+//         Author:req.body.Author,
 //         password:req.body.password
 //     });
 //     blogPosts.create(Post,function(err,blogPosts){
@@ -155,7 +291,7 @@ app.post('/blogDelete',(req,res)=>{
 
 // app.post('/login',function(req,res){
 
-//     blogPosts.findOne({name:req.body.name},(err,document)=>{
+//     blogPosts.findOne({Author:req.body.Author},(err,document)=>{
 //         if(err) console.log(err)
 //         else{
 //             if(document.password === req.body.password){
@@ -172,7 +308,7 @@ app.post('/blogDelete',(req,res)=>{
 
 // app.post('/update-Blog',(req,res)=>{
 //     blogPost.findOneAndUpdate(
-//         {name:req.body.name},
+//         {Author:req.body.Author},
 //         {$set:{blog:req.body.blog}})
 //     .then(res=>{
 //         console.log("updated successfully");

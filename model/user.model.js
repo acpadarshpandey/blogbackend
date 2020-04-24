@@ -11,7 +11,13 @@ const userSchema= new Schema({
         type:String,
      require:true,
      minlength:6
-    }
+    },
+    // username:{
+    //     type:String,
+    //     require:true,
+    //     unique:1,
+    //     trim:true
+    //    },
 });
  
  module.exports= model("user",userSchema);
