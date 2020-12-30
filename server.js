@@ -87,16 +87,20 @@ app.post('/updateBlog',(req,res)=>{
     });
 });
 
-app.post('/blogDelete',(req,res)=>{
-    blogPosts.findByIdAndRemove({_id:req.body.id},err=>{
-        if(err){
-             console.log(err)
-        }
-    })
-    res.redirect('/');
+app.delete('/blogDelete/:id',(req,res)=>{
+    const id=req.params.id;
+     console.log(id);
+     blogPosts.findByIdAndRemove({_id:id},err=>{
+     if(err)
+      console.log(err);
+     else {
+      res.json({status:"success", message: " deleted successfully!!!"});
+     }
+   
+})
 })
 
-/ app.listen(PORT, () => {
+ app.listen(PORT, () => {
          console.info(`App is running at ${PORT}`);
      }); 
 
